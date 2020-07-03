@@ -28,7 +28,7 @@ episode = []
 previous_acc = m.get_accel_data()
 previous_distance_tavelled = 0
 
-def walldist(dist,no = 200):
+def walldist(dist,no = 100):
 	wall_distance_avg.append(dist)
 	#print(wall_distance_avg)
 	if len(wall_distance_avg) == no:
@@ -48,7 +48,7 @@ global all_data
 with open('data.pickle','rb')as file:
 	all_data = pickle.load(file)
 	file.close()
-print('loaded file',all_data)
+#print('loaded file',all_data)
 
 while True:
 	if connection.in_waiting>0:
@@ -67,6 +67,7 @@ while True:
 				if wall_dist != None: #after wall_dist is returned
 					findwallavg = False
 					print('average wall distance found:',wall_dist)
+					time.sleep(1)
 					
 			current_time = time.time()
 			if not findwallavg:
@@ -94,11 +95,11 @@ while True:
 					data['dz'] = dz
 					data['d(travel_dist)'] = current_distance_travelled-previous_distance_tavelled
 					data['v(t)'] = (current_distance_travelled-previous_distance_tavelled)/dt
-					print('velocity:',data['v(t)'])
+					#print('velocity:',data['v(t)'])
 					previous_distance_tavelled = current_distance_travelled
 					
 					#print(dt,travel_time)
-					#print('swd:',wall_dist,'tavel_distance','time:',travel_time)
+					print('swd:',wall_dist,'tavel_dist',travel_dist,'time:',travel_time,'v:',data['v(t)'])
 					
 					
 					episode.append(data)
@@ -107,7 +108,10 @@ while True:
 					#print(len(episode))
 					
 					if len(episode) == 40:
-						for a in episode: print(round(a['travel_dist'],2),round(a['travel_time'],2),round(a['dt'],2),round(a['x'],2),round(a['y'],2),round(a['z'],2))
+						for a in episode: 
+							print('s:',round(a['travel_dist'],2),' t:',round(a['travel_time'],2),' dt:',
+							round(a['dt'],2),' x:',round(a['x'],2),'y:',round(a['y'],2),' z:',
+							round(a['z'],2),'  vel:',round(a['v(t)'],2))
 						save = input('Save and append this data ? (y/n)  :')
 						if save.lower() == 'y':
 							all_data.append(episode)
